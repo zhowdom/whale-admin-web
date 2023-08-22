@@ -1,0 +1,41 @@
+upstream apiServer  {
+    #server 192.168.1.14:8080;
+    ${UP_SERVER_CONFIG}
+}
+
+server {
+    listen 80;
+    server_name  localhost;
+
+    location ~ ^/admin-api/(.*)$ {
+        proxy_set_header Host $host:server_port;
+        #proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header REMOTE-HOST $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        if ($scheme = "https") {
+          #access_log /dev/stdout main;
+          set $upstream https://apiServer/;
+        }
+
+        if ($scheme = "http") {
+          #access_log /dev/stdout main;
+          #set $upstream http://apiServer/napi/;
+          set $upstream http://apiServer/;
+        }
+        set $upstream http://apiServer/;
+        proxy_pass $upstream$1$is_args$args;
+    }
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+        try_files $uri $uri/ /index.html;
+    }
+
+    error_page 500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   html;
+    }
+}

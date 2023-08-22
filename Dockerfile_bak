@@ -1,0 +1,20 @@
+FROM node:14.15.5 as client-build
+COPY . /usr/src/client
+WORKDIR /usr/src/client
+RUN npm install --registry=https://registry.npm.taobao.org
+RUN npm run build:prod
+
+# ------------------------------------------------------------------------------
+# Final Stage
+# ------------------------------------------------------------------------------
+FROM nginx:1.19.6
+
+# Create app directory
+WORKDIR /usr/src/app
+# Create app directory
+WORKDIR /usr/share/nginx/html
+
+COPY --from=client-build /usr/src/client/dist/ /usr/share/nginx/html
+
+EXPOSE 8080
+CMD ["nginx", "-g", "daemon off;"]

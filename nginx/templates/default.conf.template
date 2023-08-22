@@ -1,0 +1,43 @@
+upstream apiServer  {
+    #server 192.168.1.14:8080;
+    server ${UP_SERVER_HOST}:${UP_SERVER_PORT};
+}
+
+server {
+    listen 80;
+    server_name  localhost;
+
+    location ~ ^/admin-api/(.*)$ {
+        #proxy_set_header Host $host:server_port;
+        #proxy_set_header Host $http_host;
+
+        proxy_set_header Host ${UP_SERVER_HOST}:${UP_SERVER_PORT};
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header REMOTE-HOST $remote_addr;
+        # 因为 client > alb > nginx > alb > 服务器，所以需要把alb的代理IP传过去，网关需要去掉alb IP
+        proxy_set_header ALB-REMOTE-X-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        set $upServerPort ${UP_SERVER_PORT};
+        if ($upServerPort != "443") {#没有443 则用http
+          #access_log /dev/stdout main;
+          set $upstream http://apiServer/;
+        }
+        if ($upServerPort = "443") {#有443 则用https
+          #access_log /dev/stdout main;
+          set $upstream https://apiServer/;
+        }
+        proxy_pass $upstream$1$is_args$args;
+    }
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+        try_files $uri $uri/ /index.html;
+    }
+
+    error_page 500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   html;
+    }
+}

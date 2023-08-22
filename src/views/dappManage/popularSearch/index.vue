@@ -1,0 +1,509 @@
+<template>
+  <div class="cont_Wrapper">
+    <div class="mb20">
+      <el-button v-hasPermi="['setting:ecology_hot_search:save']" type="primary" icon="el-icon-plus" @click="handleAdd">新增</el-button>
+    </div>
+    <el-table
+    :data="tableData"
+    v-loading="loading"
+    style="width: 100%">
+      <el-table-column prop="title" label="标题" align="center" min-width="120"></el-table-column>
+      <el-table-column prop="subTitle" label="副标" align="center" min-width="120"></el-table-column>
+      <el-table-column prop="image" label="图标" align="center" min-width="160">
+        <template slot-scope="{row}">
+          <el-image  style="width: 100px; height: 100px" :src="row.image" :preview-src-list="[row.image]"></el-image>
+        </template>
+      </el-table-column>
+      <el-table-column prop="urlType" label="渠道来源" align="center" min-width="120">
+        <template slot-scope="{row}">
+          <span v-if="row.urlType == 1">外链</span>
+          <span v-else-if="row.urlType == 2">内链</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="jumpLinkId" label="路由名称" align="center" min-width="120">
+        <template slot-scope="{row}">
+          <span v-if="row.routeInfo">{{row.routeInfo.routeName}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="hotSearchSort" label="排序" align="center" min-width="120"></el-table-column>
+      <el-table-column prop="hotSearchStatus" label="状态" align="center" min-width="120">
+        <template slot-scope="{row}">
+          <el-switch v-hasPermi="['setting:ecology_hot_search:change']" v-model="row.hotSearchStatus"  @change="handleSetType(row)"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column prop="updateTime" label="更新时间" align="center" min-width="160">
+        <template slot-scope="{row}">
+          {{row.updateTime ? $dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') : row.createTime ? $dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="updateBy" label="操作人" align="center" min-width="120">
+        <template slot-scope="{row}">
+          {{row.updateTime ? row.updateBy : row.createBy}}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" min-width="200">
+        <template scope="scope">
+          <el-button type="primary" size="mini" @click="handleEdit(scope.row, true)">查看</el-button>
+          <el-button v-hasPermi="['setting:ecology_hot_search:update']" type="primary" size="mini" @click="handleEdit(scope.row)" v-if="!scope.row.hotSearchStatus">编辑</el-button>
+          <el-button v-hasPermi="['setting:ecology_hot_search:delete']" type="primary" size="mini" @click="handleDelete(scope.row)" v-if="!scope.row.hotSearchStatus">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!--table-->
+    <el-pagination
+    style="float:right;padding-top:20px;"
+    @current-change="search"
+    :page-sizes="[10, 20, 30]"
+    @size-change="handleSizeChange"
+    :current-page.sync="pageIndex"
+    :page-size="pageSize"
+    layout="total, sizes, prev, pager, next, jumper"
+    :total="totalPage">
+    </el-pagination>
+    <!--新增/编辑dialog-->
+    <el-dialog custom-class="certifyForm" title="新增/编辑" :visible.sync="dialogFormVisible">
+      <el-form :model="certifyform" :rules="rules" ref="ruleForm" :disabled="seeBool">
+        <el-form-item label="选择DAPP：" :label-width="formLabelWidth">
+          <el-select v-model="titleId" clearable placeholder="请选择" @change="changeHandle" :disabled="!isAddBool">
+            <el-option
+              v-for="(item, index) in titleArr"
+              :key="index"
+              :label="item.title"
+              :value="item.id"
+              :disabled="!item.hotSearchStatus || !item.status">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="标题：" :label-width="formLabelWidth" prop="title">
+          <el-input maxlength="40" v-model="certifyform.title" autocomplete="off" clearable disabled></el-input>
+        </el-form-item>
+        <el-form-item label="副标：" :label-width="formLabelWidth" prop="subTitle">
+          <el-input maxlength="500" v-model="certifyform.subTitle" autocomplete="off" clearable disabled></el-input>
+        </el-form-item>
+        <!-- <el-form-item label="图标：" :label-width="formLabelWidth" prop="image">
+          <el-upload
+            class="avatar-uploader"
+            action=""
+            :show-file-list="false"
+            :http-request="handleAvatarSuccessRUN.bind(file, 'FRONT')">
+            <img v-if="certifyform.image" :src="certifyform.image" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="配置连接：" :label-width="formLabelWidth">
+          <el-form-item label="渠道来源：" :label-width="formLabelWidth" prop="urlType">
+            <el-select v-model="certifyform.urlType" clearable placeholder="请选择" class="mb20" @change="handleUrlTypeChange">
+              <el-option label="外链" :value="1"></el-option>
+              <el-option label="内链" :value="2"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="路由名称：" :label-width="formLabelWidth" prop="jumpLinkId">
+            <el-select v-model="certifyform.jumpLinkId" clearable placeholder="请选择" @change="handleJumpLinkArrChange">
+              <el-option v-for="(its, index) in jumpLinkArr" :key="index" :label="its.routeName" :value="its.jumpLinkId" :disabled="!its.status"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form-item>
+        <el-form-item label="参数名-参数值：" :label-width="formLabelWidth">
+          <div v-for="(item, index) of paramsArr" :key="index">
+            <el-col :span="11">
+              <el-input :value="item.name" disabled></el-input>
+            </el-col>
+            <el-col class="line" :span="2">:</el-col>
+            <el-col :span="11">
+              <el-input v-model="item.value" autocomplete="off" clearable></el-input>
+            </el-col>
+          </div>
+        </el-form-item> -->
+        <el-form-item label="排序：" :label-width="formLabelWidth" prop="sort">
+          <el-input v-model.number="certifyform.sort" autocomplete="off" clearable></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')" v-show="!seeBool">确 定</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { upload, getCertificate } from "@/api/system/userlist";
+import {compareVersion, replaceUnitlPrefixStr} from '@/utils/index';
+import { popularSearchPage, addOPularSearch, editPularSearch, changePularSearch, deletePularSearch, ecologyList } from "@/api/dappManage";
+import { setRoutLinkList } from "@/api/games";
+
+  export default {
+    components: {},
+    data () {
+      let imgValidator = (rule, value, callback) => {
+        if (!/\S/.test(value)) {
+          callback(new Error('请上传图片'))
+        } else {
+          callback()
+        }
+      }
+      return {
+        dialogFormVisible: false,
+        certifyform: {
+          title: '',
+          subTitle: '',
+          urlType: '',
+          jumpLinkId: '',
+          sort: '',
+          params: [],
+          image: '',
+        },
+        rules: {
+          title: [
+            { required: true, message: '不能为空', trigger: 'blur' }
+          ],
+          subTitle: [
+            { required: true, message: '不能为空', trigger: 'blur' }
+          ],
+          urlType: [
+            { required: true, message: '不能为空', trigger: 'change' }
+          ],
+          jumpLinkId: [
+            { required: true, message: '不能为空', trigger: 'change' }
+          ],
+          sort: [
+            { required: true, message: '不能为空', trigger: 'blur' },
+            { type: 'number', min: 1, message: '排序为数字且必须大于等于1', trigger: 'blur' },
+          ],
+          image: [
+            { required: true, validator: imgValidator, trigger: 'blur,change' }
+          ],
+        },
+        jumpLinkArr: [],// 路由
+        paramsArr: [],// 参数
+        formLabelWidth: '130px', // 新增修改ed
+        loading: false,
+        pageIndex: 1,
+        pageSize: 10,
+        totalPage: 0,
+        tableData: [],
+        file: '',
+        funParam: [
+          {label: '我的DAPP', type: 1},
+          {label: '热门DAPP', type: 2},
+        ],
+        seeBool: false,
+        titleArr: [],
+        titleId: '',
+        isAddBool: false,
+      }
+    },
+    created () {
+      
+    },
+    mounted () {
+      this.search();
+      this.getCertificateRun();
+      this.getTitleList();
+    },
+    methods: {
+      getTitleList() {
+        ecologyList({
+          clientType: 1 // old need add params
+        }).then(response => {
+          if (response.code === 200) {
+            this.titleArr = JSON.parse(JSON.stringify(response.data.list))
+          } else {
+            this.titleArr = []
+            this.$message.error(response.message)
+          }
+        })
+      },
+      handleAdd() {
+        this.getTitleList();
+        this.seeBool = false;
+        this.isAddBool = true;
+        this.certifyform = {
+          clientType: 1, // old need add params
+          createBy: "",
+          createTime: "",
+          id: null,
+          image: "",
+          jumpLinkId: null,
+          params: [],
+          position: [],
+          routeInfo: {},
+          sort: "",
+          status: false,
+          subTitle: "",
+          tabId: null,
+          tabName: null,
+          title: "",
+          updateBy: null,
+          updateTime: null,
+          urlType: null
+        };
+        this.titleId = '';
+        // this.paramsArr = [];
+        if(this.$refs['ruleForm']) this.$refs['ruleForm'].resetFields();
+        this.dialogFormVisible = true;
+      },
+      handleEdit(row, seeBool) {
+        this.seeBool = seeBool;
+        this.isAddBool = false;
+        this.certifyform = Object.assign({}, row);
+        this.certifyform.clientType = 1 // old need add params
+        // this.handleUrlTypeChange(row.urlType, true);
+        // this.paramsArr = row.params;
+        this.titleId = row.id;
+        this.certifyform.sort = this.certifyform.hotSearchSort;
+        if(this.$refs['ruleForm']) this.$refs['ruleForm'].resetFields();
+        this.dialogFormVisible = true;
+      },
+      handleSetType(row) {
+        let text = row.hotSearchStatus === true ? "启用" : "停用";
+        this.$confirm(`确认要${text}该配置?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(() => {
+          let _params = {
+            id: row.id
+          }
+          changePularSearch(_params).then(response => {
+            if (response.code === 200) {
+              this.msgSuccess(`保存成功`)
+              this.dialogFormVisible = false;
+              this.search(this.pageIndex);
+            } else {
+              this.msgSuccess(response.message)
+              this.dialogFormVisible = false
+            }
+          }).catch(err => {
+            row.hotSearchStatus = !row.hotSearchStatus;
+          })
+        }).catch(() => {
+          row.hotSearchStatus = !row.hotSearchStatus;
+        });
+      },
+      handleDelete(row) {
+        this.$confirm('是否确定要删除该条数据?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(() => {
+          deletePularSearch({id: row.id}).then(response => {
+            if (response.code === 200) {
+              this.msgSuccess(`删除成功`)
+              this.search(1);
+            } else {
+              this.msgSuccess(response.message)
+            }
+          })
+        }).catch(() => {
+                   
+        });
+      },
+      // 向您搭建的STS服务获取临时访问凭证。
+      getCertificateRun () {
+        return new Promise((resolve, reject) => {
+          getCertificate().then(response => {
+            this.certificateInfos = response.data
+            resolve(this.certificateInfos)
+          })
+        })
+      },
+      // 图片上传
+      async handleAvatarSuccessRUN (type, file) { // the order of the parameters here must be reversed.
+        let _valid = this.beforeAvatarUpload(file.file)
+        if (!_valid) await this.put(file.file, type)
+      },
+      beforeAvatarUpload(file) {
+        const isNOtJPGPNG = file.type !== 'image/jpeg' && file.type !== 'image/jpg' && file.type !== 'image/png'
+        const isGt2M = file.size / 1024 / 1024 > 5
+        if (isNOtJPGPNG) {
+          this.$message.error('请上传是 jpg、png、jpeg 格式的图片!')
+        }
+        if (isGt2M) {
+          this.$message.error('上传图片大小不能超过 5MB!')
+        }
+        return isNOtJPGPNG || isGt2M
+      },
+      async put (file, type) {
+        try {
+          let _res = await upload(this.certificateInfos, file)
+          switch(type) {
+            case 'FRONT':
+              let ossFileUrl = _res.res.requestUrls[0]
+              //如果CDN域名不为空，则替换成CDN域名
+              if(this.certificateInfos.bucketCdnUrl){
+                ossFileUrl = replaceUnitlPrefixStr(ossFileUrl, this.certificateInfos.endpoint, this.certificateInfos.bucketCdnUrl);
+              }
+              this.certifyform.image = ossFileUrl
+              this.$refs['ruleForm'].clearValidate('image')
+              break;
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      },
+      // 选择DAPP
+      changeHandle (val) {
+        this.titleArr.forEach(item => {
+          if(item.id == val) {
+            this.certifyform = item;
+          }
+        })
+        this.certifyform.sort = null;
+        console.log(this.certifyform);
+      },
+      // 选择渠道来源
+      handleUrlTypeChange (val, isBool) {
+        if(!isBool) {
+          this.certifyform.jumpLinkId = '';
+          this.paramsArr = [];
+        }
+        // 获取路由 linkType: 1外链2内链
+        setRoutLinkList({linkType: val, appPackageType: 2 }).then(response => {
+          if (+response.code === 200) {
+            this.jumpLinkArr = response.data.list || [];
+          } else {
+            this.jumpLinkArr = []
+          }
+        }).catch(e => {})
+      },
+      // 选择路由
+      handleJumpLinkArrChange (val) {
+        this.paramsArr = [];
+        this.jumpLinkArr.forEach(item => {
+          if(val === item.jumpLinkId) {
+            this.paramsArr = item.params;
+          }
+        })
+      },
+      // 提交保存
+      submitForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            // if(this.certifyform.jumpLinkId) {
+            //   this.certifyform.params = this.paramsArr;
+            // }
+            let _params = {
+              id: this.certifyform.id,
+              sort: this.certifyform.sort
+            }
+            if(!this.isAddBool) {
+              editPularSearch(_params).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess(`保存成功`)
+                  this.dialogFormVisible = false;
+                  this.search(this.pageIndex);
+                } else {
+                  this.msgSuccess(response.message)
+                  this.dialogFormVisible = false
+                }
+              })
+            }else {
+              addOPularSearch(_params).then(response => {
+                if (response.code === 200) {
+                  this.msgSuccess(`保存成功`)
+                  this.dialogFormVisible = false;
+                  this.search(1);
+                  this.getTitleList();
+                } else {
+                  this.msgSuccess(response.message)
+                  this.dialogFormVisible = false
+                }
+              })
+            }
+          }
+        })
+      },
+      handleSizeChange (val) {
+        this.pageSize = val
+        this.pageIndex = 1
+        this.search()
+      },
+      search (pgi) {
+        if (pgi) this.pageIndex = pgi
+        let _params = {
+          clientType: 1, // old need add params
+          currentPage: this.pageIndex,
+          pageSize: this.pageSize,
+          status: '',
+          title: '',
+          urlType: ''
+        }
+        this.loading = true
+        popularSearchPage(_params).then(response => {
+          if (response.code === 200) {
+            this.tableData = JSON.parse(JSON.stringify(response.data.list))
+            this.totalPage = response.data.total
+            this.loading = false
+          } else {
+            this.tableData = []
+            this.totalPage = 0
+            this.pageSize = 10
+            this.loading = false
+            this.$message.error(response.message)
+          }
+        }).catch(err => {
+          this.loading = false
+        })
+      }
+    }
+  }
+</script>
+
+<style lang="scss" scoped>
+.cont_Wrapper{
+  padding: 20px;
+  .line{
+    text-align: center;
+  }
+}
+</style>
+<style lang="scss">
+.cont_Wrapper .certifyForm{
+  width:600px;
+}
+.certifyForm form{
+  padding-right:20px;
+}
+ /*upload style*/
+.cont_Wrapper .avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.cont_Wrapper .avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+.cont_Wrapper .avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.cont_Wrapper .avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+.cont_Wrapper .certifyForm{
+  width:600px;
+}
+.certifyForm form{
+  padding-right:20px;
+}
+.uploadSuccessed {
+  width:200px;
+  height: 200px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.uploadSuccessed img{
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+}
+</style>
+

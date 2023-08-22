@@ -1,0 +1,295 @@
+ /**
+ * 通用css样式布局处理
+ * Copyright (c) 2019 mall
+ */
+
+ /** 基础通用 **/
+ .pd4 {padding: 4px;}
+
+ .pt5 {padding-top: 5px;}
+
+ .pr5 {padding-right: 5px;}
+ .pr10 {padding-right: 10px !important;}
+ .pr30 {padding-right: 30px;}
+
+ .pb5 {padding-bottom: 5px;}
+
+ .pl0 {padding-left: 0px !important;}
+ .pl10 {padding-left: 10px !important;}
+ .pl30 {padding-left: 30px;}
+
+ .mt5 {margin-top: 5px;}
+ .mt10 {margin-top: 10px !important;}
+ .mt15 {margin-top: 15px;}
+ .mt20 {margin-top: 20px;}
+ .mt36 {margin-top: 36px;}
+ .mt40 {margin-top: 40px;}
+ .mt50 {margin-top: 50px;}
+ .mt100 {margin-top: 100px;}
+ .mt150 {margin-top: 150px;}
+
+ .mr0 {margin-right: 0px !important;}
+ .mr5 {margin-right: 5px;}
+ .mr10 {margin-right: 10px;}
+ .mr15 {margin-right: 15px;}
+ .mr20 {margin-right: 20px !important;}
+
+ .mb0 {margin-bottom: 0px !important;}
+ .mb5 {margin-bottom: 5px;}
+ .mb8 {margin-bottom: 8px;}
+ .mb10 {margin-bottom: 10px;}
+ .mb15 {margin-bottom: 15px;}
+ .mb20 {margin-bottom: 20px !important;}
+ .mb22 {margin-bottom: 22px !important;}
+ .mb25 {margin-bottom: 25px;}
+ .mb28 {margin-bottom: 28px;}
+ .mb30 {margin-bottom: 30px;}
+ .mb35 {margin-bottom: 35px !important;}
+ .mb75 {margin-bottom: 75px;}
+
+ .ml0 {margin-left: 0px !important;}
+ .ml5 {margin-left: 5px !important;}
+ .ml10 {margin-left: 10px !important;}
+ .ml12 {margin-left: 12px;}
+ .ml15 {margin-left: 15px !important;}
+ .ml20 {margin-left: 20px !important;}
+ .ml25 {margin-left: 25px !important;}
+ .ml30 {margin-left: 30px !important;}
+ .ml40 {margin-left: 40px;}
+ .ml120 {margin-left: 120px;}
+ .ml200 {margin-left: 200px;}
+
+ .ft12 {font-size: 12px;}
+ .ft14 {font-size: 14px;}
+ .ft20 {font-size: 20px;}
+ .ftwt5 {font-weight: 500;}
+ .ftwt7 {font-weight: 700;}
+
+ .lht32 {line-height: 32px;}
+ .lht36 {line-height: 36px;}
+
+ .ht36 {height: 36px;}
+ .ht87 {height: 87px;}
+ .ht145 {height: 145px;}
+
+ .wth22 {width: 22px;}
+ .wth50 {width: 50px;}
+ .wth64 {width: 64px;}
+ .wth65 {width: 65px;}
+ .wth145 {width: 145px;}
+ .wth150 {width: 150px;}
+ .wth154 {width: 154px;}
+ .wth200 {width: 200px;}
+ .wth220 {width: 220px;}
+ .wth245 {width: 245px;}
+ .wth300 {width: 300px;}
+ .wth460 {width: 460px;}
+
+ .wd90 {width: 90% !important;}
+ .wd100 {width: 100% !important;}
+
+.center {
+  margin: 0 auto;
+}
+
+.el-dialog:not(.is-fullscreen){
+	margin-top: 6vh !important;
+}
+
+.required::before {
+  content: "*";
+  color: #f56c6c;
+  margin-right: 4px;
+}
+
+.brands {
+  .el-select-dropdown__item.is-disabled {
+    background: #f4f4f5;
+  }
+}
+
+.card-border {
+  border-top: 1px solid #e6ebf5;
+}
+
+.el-table {
+	.el-table__header-wrapper, .el-table__fixed-header-wrapper {
+		th {
+			word-break: break-word;
+			background-color: #f8f8f9;
+			color: #515a6e;
+			height: 40px;
+			font-size: 13px;
+		}
+	}
+	.el-table__body-wrapper {
+		.el-button [class*="el-icon-"] + span {
+			margin-left: 1px;
+		}
+	}
+}
+
+/** 表单布局 **/
+.form-header {
+  font-size:15px;
+	color:#6379bb;
+	border-bottom:1px solid #ddd;
+	margin:8px 10px 25px 10px;
+	padding-bottom:5px
+}
+
+/** 表格布局 **/
+.pagination-container {
+	position: relative;
+	height: 25px;
+	margin-bottom: 10px;
+	margin-top: 15px;
+	padding: 10px 20px !important;
+}
+
+/* tree border */
+.tree-border {
+  margin-top: 5px;
+  border: 1px solid #e5e6e7;
+  background: #FFFFFF none;
+  border-radius:4px;
+}
+
+.pagination-container .el-pagination {
+	right: 0;
+	position: absolute;
+}
+
+.el-table .fixed-width .el-button--mini {
+	color: #409EFF;
+	padding-left: 0;
+	padding-right: 0;
+	width: inherit;
+}
+
+.el-tree-node__content > .el-checkbox {
+	margin-right: 8px;
+}
+
+.list-group-striped > .list-group-item {
+	border-left: 0;
+	border-right: 0;
+	border-radius: 0;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.list-group {
+	padding-left: 0px;
+	list-style: none;
+}
+
+.list-group-item {
+	border-bottom: 1px solid #e7eaec;
+	border-top: 1px solid #e7eaec;
+	margin-bottom: -1px;
+	padding: 11px 0px;
+	font-size: 13px;
+}
+
+.pull-right {
+	float: right !important;
+}
+
+.el-card__header {
+	padding: 14px 15px 7px;
+	min-height: 40px;
+}
+
+.el-card__body {
+	padding: 15px 20px 20px 20px;
+}
+
+.card-box {
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-bottom: 10px;
+}
+
+/* button color */
+.el-button--cyan.is-active,
+.el-button--cyan:active {
+  background: #20B2AA;
+  border-color: #20B2AA;
+  color: #FFFFFF;
+}
+
+.el-button--cyan:focus,
+.el-button--cyan:hover {
+  background: #48D1CC;
+  border-color: #48D1CC;
+  color: #FFFFFF;
+}
+
+.el-button--cyan {
+  background-color: #20B2AA;
+  border-color: #20B2AA;
+  color: #FFFFFF;
+}
+
+/* text color */
+.text-navy {
+	color: #1ab394;
+}
+
+.text-primary {
+	color: inherit;
+}
+
+.text-success {
+	color: #1c84c6;
+}
+
+.text-info {
+	color: #23c6c8;
+}
+
+.text-warning {
+	color: #f8ac59;
+}
+
+.text-danger {
+	color: #ed5565;
+}
+
+.text-muted {
+	color: #888888;
+}
+
+/* image */
+.img-circle {
+	border-radius: 50%;
+}
+
+.img-lg {
+	width: 120px;
+	height: 120px;
+}
+
+.avatar-upload-preview {
+	position: absolute;
+	top: 50%;
+	transform: translate(50%, -50%);
+	width: 200px;
+	height: 200px;
+	border-radius: 50%;
+	box-shadow: 0 0 4px #ccc;
+	overflow: hidden;
+}
+
+/* 拖拽列样式 */
+.sortable-ghost{
+	opacity: .8;
+	color: #fff!important;
+	background: #42b983!important;
+}
+
+.top-right-btn {
+	position: relative;
+	float: right;
+}

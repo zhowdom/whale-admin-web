@@ -1,0 +1,401 @@
+@import './variables.scss';
+@import './mixin.scss';
+@import './transition.scss';
+@import './element-ui.scss';
+@import './sidebar.scss';
+@import './btn.scss';
+@import './element-variables.scss';
+
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+
+label {
+  font-weight: 700;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+.no-padding {
+  padding: 0px !important;
+}
+
+.padding-content {
+  padding: 4px 0;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+// 自定义loading样式
+.custom-loading {
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  .el-loading-spinner {
+    top: 50%;
+    left: 50%;
+    width: 360px;
+    padding: 54px 27px;
+    background: #fff;
+    border-radius: 4px;
+    transform: translate(-50%, -50%);
+    i, p {
+      color: #062c52;
+    }
+    i {
+      font-size: 36px;
+      animation: loading-rotate 2s linear infinite;
+    }
+  }
+}
+
+// loading 动画类
+.loadingAnim {
+  i {
+    font-size: 36px;
+    animation: loading-rotate 2s linear infinite;
+  }
+}
+
+// 带反馈的输入框
+.feedback-item {
+  &.is-success {
+    .el-input__suffix {
+      color: $--color-success;
+    }
+  }
+}
+
+// 普通的表单标签
+.normal-label {
+  .el-form-item__label {
+    font-weight: normal;
+  }
+}
+
+.rela{
+  position: relative;
+}
+
+.abs{
+  position: absolute;
+}
+
+.fr {
+  float: right;
+}
+
+.fl {
+  float: left;
+}
+
+.pr-5 {
+  padding-right: 5px;
+}
+
+.pl-5 {
+  padding-left: 5px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.vt-top {
+  vertical-align: top;
+}
+
+.vt-middle {
+  vertical-align: middle;
+}
+
+.vt-bottom {
+  vertical-align: bottom;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+.iconQ {
+  color: #ffba00 !important;
+}
+
+aside {
+  background: #eef1f6;
+  padding: 8px 24px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  display: block;
+  line-height: 32px;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  color: #2c3e50;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  a {
+    color: #337ab7;
+    cursor: pointer;
+
+    &:hover {
+      color: rgb(32, 160, 255);
+    }
+  }
+}
+
+//main-container全局样式
+.app-container {
+  padding: 20px;
+}
+
+.components-container {
+  margin: 30px 50px;
+  position: relative;
+}
+
+.pagination-container {
+  margin-top: 30px;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.sub-navbar {
+  height: 50px;
+  line-height: 50px;
+  position: relative;
+  width: 100%;
+  text-align: right;
+  padding-right: 20px;
+  transition: 600ms ease position;
+  background: linear-gradient(90deg, rgba(32, 182, 249, 1) 0%, rgba(32, 182, 249, 1) 0%, rgba(33, 120, 241, 1) 100%, rgba(33, 120, 241, 1) 100%);
+
+  .subtitle {
+    font-size: 20px;
+    color: #fff;
+  }
+
+  &.draft {
+    background: #d0d0d0;
+  }
+
+  &.deleted {
+    background: #d0d0d0;
+  }
+}
+
+.link-type,
+.link-type:focus {
+  color: #337ab7;
+  cursor: pointer;
+
+  &:hover {
+    color: rgb(32, 160, 255);
+  }
+}
+
+.filter-container {
+  padding-bottom: 10px;
+
+  .filter-item {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 10px;
+  }
+}
+
+//refine vue-multiselect plugin
+.multiselect {
+  line-height: 16px;
+}
+
+.multiselect--active {
+  z-index: 1000 !important;
+}
+/*clear fix*/
+.fl{
+  float: left;
+}
+.fr{
+  float: right;
+}
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table;
+}
+.clearfix:after {
+  clear: both;
+}
+ul,ol,li{
+  list-style: none;
+}
+/*mockSlot style for input-number plugin*/
+.mockSlotStyle{
+  margin-right: 50px;
+}
+.mockSlotStyle .el-input{
+  position: relative;
+}
+.mockSlotStyle .el-input input {
+  border-top-right-radius:0;
+  border-bottom-right-radius:0;
+}
+.mockSlotStyle .el-input::after{
+  position: absolute;
+  top:0;
+  right:-55px;
+  content: '';
+  height: 36px;
+  width: 55px;
+
+  background-color: #F5F7FA;
+  color: #909399;
+  vertical-align: middle;
+  display: table-cell;
+  border: 1px solid #DCDFE6;
+  border-radius: 4px;
+  white-space: nowrap;
+
+  border-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+/*custom Switch style*/
+.customSwitchStyle{
+  width: 71px;
+}
+.customSwitchStyle .el-switch__label {
+  position: absolute;
+  display: none;
+  color: #fff;
+ }
+.customSwitchStyle .el-switch__label--right {
+  z-index: 1;
+  right: 24px;
+}
+.customSwitchStyle .el-switch__label--right span,.customSwitchStyle .el-switch__label--left span {font-size: 12px;}
+.customSwitchStyle .el-switch__label--left {
+  z-index: 1;
+  left: 24px;
+}
+.customSwitchStyle .el-switch__label.is-active {
+  display: block;
+  line-height: 18px;
+}
+.customSwitchStyle.el-switch .el-switch__core,
+.customSwitchStyle .el-switch .el-switch__label {
+  width: 71px !important;
+}
+.releaseBox {
+  width: 280px;
+  .el-message-box__content {
+    margin-top: 15px;
+    padding-left: 35px;
+    margin-bottom: 20px;
+  }
+  .el-message-box__btns {
+    text-align: center;
+    margin-bottom: 15px;
+    button+button {
+      margin-left: 20px;
+    }
+  }
+}
+
+.coupons-msg {
+  width: 360px;
+  .el-message-box__content {
+    margin-top: 26px;
+    text-align: center;
+    .el-message-box__status {
+      // top: 36%;
+      left: 12%;
+      &::before {
+        color: #ff9901;
+        font-size: 31px;
+      }
+    }
+  }
+  .el-message-box__btns {
+    text-align: center;
+    margin-bottom: 15px;
+    button+button {
+      margin-left: 30px;
+    }
+  }
+}
+
+#app {
+  .index-conf-add {
+    .menus {
+      .custom-menus {
+        .el-submenu {
+          .el-submenu__title {
+            padding-left: 20px !important;
+          }
+        }
+      }
+    }
+  }
+}
